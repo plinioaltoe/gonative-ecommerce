@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 
 import { TouchableOpacity } from 'react-native'
-import { bindActionCreators } from 'redux'
+// import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 
 import {
@@ -44,8 +44,11 @@ class Tabs extends Component {
       <Container>
         <TabsContainer>
           {categories.map(category => (
-            <TouchableOpacity onPress={() => this.setState({ idSelected: category.id })}>
-              <TabItem key={category.id} selected={category.id === idSelected && true}>
+            <TouchableOpacity
+              key={category.id}
+              onPress={() => this.setState({ idSelected: category.id })}
+            >
+              <TabItem selected={category.id === idSelected && true}>
                 <TabText>{category.title}</TabText>
               </TabItem>
             </TouchableOpacity>
@@ -56,7 +59,7 @@ class Tabs extends Component {
   }
 }
 
-const mapStateToProps = state => ({})
+const mapStateToProps = () => ({})
 
 // const mapDispatchToProps = dispatch =>
 //   bindActionCreators(Actions, dispatch);
