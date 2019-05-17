@@ -9,7 +9,7 @@ import {
 
 class Header extends Component {
   static defaultProps = {
-    navigateLocation: null,
+    navigateLocation: 'asdas',
   }
 
   static propTypes = {

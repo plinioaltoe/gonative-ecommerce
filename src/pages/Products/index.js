@@ -16,6 +16,8 @@ import Lista from '~/components/Lista'
 import Header from '~/components/Header'
 import api from '~/services/api'
 
+import Tabs from '~/components/Tabs'
+
 export default class Products extends Component {
   state = {
     product: 'react-community/react-navigation',
@@ -50,22 +52,7 @@ export default class Products extends Component {
     return data
   }
 
-  saveRepository = async ({
-    id, name, full_name, organization,
-  }) => {
-    const { avatar_url, login } = organization
-    const { productList } = this.state
-    const itemRepo = {
-      id,
-      name,
-      login,
-      avatar_url,
-      full_name,
-    }
-    const newRepo = [...productList, itemRepo]
-    await AsyncStorage.setItem('@GithubRepo:productList', JSON.stringify(newRepo))
-    this.setState({ product: '' })
-  }
+  saveRepository = () => {}
 
   addRepository = async () => {
     const { product } = this.state
@@ -81,13 +68,7 @@ export default class Products extends Component {
     }
   }
 
-  handleNextPage = (full_name) => {
-    const { navigation } = this.props
-    navigation.navigate('Issues', {
-      full_name,
-      other: '0/0',
-    })
-  }
+  handleNextPage = () => { }
 
   render() {
     const {
@@ -96,7 +77,8 @@ export default class Products extends Component {
     return (
       <View style={styles.container}>
         <StatusBar barStyle="dark-content" />
-        <Header title="GitIssues" />
+        <Header title="GoCommerce" />
+        <Tabs />
         {error && <Text style={styles.error}>Erro ao adicionar</Text>}
         <View style={styles.form}>
           <TextInput

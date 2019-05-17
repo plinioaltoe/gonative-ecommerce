@@ -8,21 +8,19 @@ export const Container = styled.View.attrs({
 })`
   height: ${54 + getStatusBarHeight()}px;
   padding-top: ${getStatusBarHeight()}px;
-  border-bottom-color: ${colors.light};
 
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
 
   background-color: ${colors.white};
-  border-bottom-width: 1;
 `
 export const Content = styled.View`
   width: 10px;
 `
 
 export const IconButton = styled(Icon)`
-  color: ${colors.secondary};
+  color: ${colors.light};
 `
 
 export const Title = styled.Text`
