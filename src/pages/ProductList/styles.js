@@ -14,3 +14,7 @@ export const FlatProductList = styled.FlatList.attrs({
     justifyContent: 'space-between',
   },
 })``
+
+export const Loading = styled.ActivityIndicator`
+  flex: 1;
+`

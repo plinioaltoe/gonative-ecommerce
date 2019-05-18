@@ -47,7 +47,7 @@ export const Price = styled.Text`
 `
 
 export const IconButton = styled(Icon)`
-  color: ${colors.light};
+  color: ${colors.regular};
 `
 
 export const Quantity = styled.TextInput`

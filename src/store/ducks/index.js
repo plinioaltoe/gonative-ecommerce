@@ -1,7 +1,11 @@
 import { combineReducers } from 'redux'
 
-import repository from './repository'
+import { reducer as categories } from './categories'
+import { reducer as products } from './products'
+import { reducer as cart } from './cart'
 
 export default combineReducers({
-  repository,
+  categories,
+  products,
+  cart,
 })

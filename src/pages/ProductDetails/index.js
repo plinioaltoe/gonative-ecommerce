@@ -1,9 +1,11 @@
-import React from 'react'
+import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
 import { StatusBar } from 'react-native'
-// import { bindActionCreators } from 'redux'
+import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
+
+import CartActions from '~/store/ducks/cart'
 
 import Header from '~/components/Header'
 
@@ -22,34 +24,42 @@ import {
   ButtonText,
 } from './styles'
 
-const ProductDetails = (props) => {
-  const { navigation } = props
-  const item = navigation.getParam('item')
+class ProductDetails extends Component {
+  handleNextPage = (item) => {
+    const { navigation, addProduct } = this.props
+    addProduct(item)
+    navigation.navigate('Cart', { item })
+  }
 
-  return (
-    <Container>
-      <StatusBar barStyle="dark-content" />
-      <Header title="Detalhe do Produto" navigateLocation="ProductList" />
-      <ProductContainer>
-        <ImageContainer>
-          <ImageProduct source={{ url: item.image }} />
-        </ImageContainer>
+  render() {
+    const { navigation } = this.props
+    const item = navigation.getParam('item')
 
-        <Content>
-          <NameBrandContent>
-            <Name>{item.name}</Name>
-            <Brand>{item.brand}</Brand>
-          </NameBrandContent>
-          <Price>{item.price}</Price>
-        </Content>
-        <ButtonContainer>
-          <ButtonAdd onPress={() => {}}>
-            <ButtonText>Adicionar ao carrinho</ButtonText>
-          </ButtonAdd>
-        </ButtonContainer>
-      </ProductContainer>
-    </Container>
-  )
+    return (
+      <Container>
+        <StatusBar barStyle="dark-content" />
+        <Header title="Detalhe do Produto" navigateLocation="ProductList" />
+        <ProductContainer>
+          <ImageContainer>
+            <ImageProduct source={{ url: item.image }} />
+          </ImageContainer>
+
+          <Content>
+            <NameBrandContent>
+              <Name>{item.name}</Name>
+              <Brand>{item.brand}</Brand>
+            </NameBrandContent>
+            <Price>R$ {item.price}</Price>
+          </Content>
+          <ButtonContainer>
+            <ButtonAdd onPress={() => this.handleNextPage(item)}>
+              <ButtonText>Adicionar ao carrinho</ButtonText>
+            </ButtonAdd>
+          </ButtonContainer>
+        </ProductContainer>
+      </Container>
+    )
+  }
 }
 
 ProductDetails.propTypes = {
@@ -58,14 +68,14 @@ ProductDetails.propTypes = {
       getParam: PropTypes.func,
     }),
   }).isRequired,
+  addProduct: PropTypes.func.isRequired,
 }
 
 const mapStateToProps = () => ({})
 
-// const mapDispatchToProps = dispatch =>
-//   bindActionCreators(Actions, dispatch);
+const mapDispatchToProps = dispatch => bindActionCreators(CartActions, dispatch)
 
 export default connect(
-  mapStateToProps
-  // mapDispatchToProps
+  mapStateToProps,
+  mapDispatchToProps
 )(ProductDetails)

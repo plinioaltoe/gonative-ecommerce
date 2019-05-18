@@ -2,23 +2,38 @@ import React, { Component } from 'react'
 
 import { StatusBar } from 'react-native'
 import PropTypes from 'prop-types'
-import { Container, FlatProductList } from './styles'
+
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
+
+import ProductsActions from '~/store/ducks/products'
+
+import { Container, FlatProductList, Loading } from './styles'
 
 import ProductListItem from './ProductListItem'
 import Header from '~/components/Header'
-
 import Tabs from '~/components/Tabs'
 
-export default class ProductList extends Component {
+class ProductList extends Component {
   static propTypes = {
     navigation: PropTypes.shape({
       navigate: PropTypes.func,
     }).isRequired,
+    products: PropTypes.shape({
+      image: PropTypes.string,
+      title: PropTypes.string,
+      brand: PropTypes.string,
+      price: PropTypes.number,
+    }).isRequired,
+    loadProductsRequest: PropTypes.func.isRequired,
   }
 
   state = {}
 
-  componentDidMount = async () => {}
+  componentDidMount = () => {
+    const { loadProductsRequest } = this.props
+    loadProductsRequest(1)
+  }
 
   renderListItem = ({ item }, handleNextPage) => (
     <ProductListItem item={item} handleNextPage={handleNextPage} />
@@ -30,55 +45,36 @@ export default class ProductList extends Component {
   }
 
   render() {
-    const products = [
-      {
-        id: 1,
-        name: 'Camiseta Hyperas Preta',
-        brand: 'Quiksilver',
-        image:
-          'https://t-static.dafiti.com.br/czCvp3wBNPfehf7omYZfJacnxPY=/fit-in/427x620/dafitistatic-a.akamaihd.net%2fp%2fquiksilver-camiseta-quiksilver-hyperas-preta-8710-7136243-1-product.jpg',
-        price: 49.99,
-      },
-      {
-        id: 2,
-        name: 'Camiseta Double Tap Preta',
-        brand: 'Quiksilver',
-        image:
-          'https://t-static.dafiti.com.br/EpEXepU-tSbgo6ZMl4Y5BOdjelw=/fit-in/427x620/dafitistatic-a.akamaihd.net%2fp%2fquiksilver-camiseta-quiksilver-double-tap-preta-7115-8165043-1-product.jpg',
-        price: 59.99,
-      },
-      {
-        id: 3,
-        name: 'Camiseta Logo Azul',
-        brand: 'Red Bull',
-        image:
-          'https://t-static.dafiti.com.br/aC9871vKWfL3bDgbhLx5sFLa7xs=/fit-in/427x620/dafitistatic-a.akamaihd.net%2fp%2fred-bull-camiseta-red-bull-logo-azul-0272-7714033-1-product.jpg',
-        price: 54.99,
-      },
-      {
-        id: 4,
-        name: 'Camiseta Primo Tipper',
-        brand: 'Rip Curl',
-        image:
-          'https://t-static.dafiti.com.br/weG0u9eKZ4KBV-G0XFOQ5hoY4eI=/fit-in/427x620/dafitistatic-a.akamaihd.net%2fp%2frip-curl-camiseta-rip-curl-primo-tipper-preto-8138-3441052-1-product.jpg',
-        price: 39.99,
-      },
-    ]
+    const { products } = this.props
 
     return (
       <Container>
         <StatusBar barStyle="dark-content" />
         <Header title="GoCommerce" />
         <Tabs />
-        <FlatProductList
-          data={products}
-          keyExtractor={item => String(item.id)}
-          renderItem={item => this.renderListItem(item, this.handleNextPage)}
-          onRefresh={() => {}}
-          refreshing={false}
-          numColumns={2}
-        />
+        {products.loading ? (
+          <Loading size="large" />
+        ) : (
+          <FlatProductList
+            data={products.data}
+            keyExtractor={item => String(item.id)}
+            renderItem={item => this.renderListItem(item, this.handleNextPage)}
+            refreshing={false}
+            numColumns={2}
+          />
+        )}
       </Container>
     )
   }
 }
+
+const mapStateToProps = state => ({
+  products: state.products,
+})
+
+const mapDispatchToProps = dispatch => bindActionCreators(ProductsActions, dispatch)
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ProductList)

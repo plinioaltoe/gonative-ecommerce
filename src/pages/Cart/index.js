@@ -3,10 +3,14 @@ import { StatusBar } from 'react-native'
 
 import PropTypes from 'prop-types'
 
-// import { bindActionCreators } from 'redux'
+import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 
+import CartActions from '~/store/ducks/cart'
+
 import Header from '~/components/Header'
+import Empty from '~/components/Empty'
+
 import Icon from 'react-native-vector-icons/FontAwesome'
 
 import CartItem from './CartItem'
@@ -19,11 +23,35 @@ class Cart extends Component {
     navigation: PropTypes.shape({
       navigate: PropTypes.func,
     }).isRequired,
+    products: PropTypes.shape({
+      image: PropTypes.string,
+      title: PropTypes.string,
+      brand: PropTypes.string,
+      price: PropTypes.number,
+      quantity: PropTypes.number,
+    }).isRequired,
   }
 
-  state = {}
+  state = {
+    total: 0,
+  }
 
-  componentDidMount = async () => {}
+  componentDidMount = () => {
+    this.getTotalPrice(this.props)
+  }
+
+  componentWillReceiveProps = (newProps) => {
+    this.getTotalPrice(newProps)
+  }
+
+  getTotalPrice = (props) => {
+    const { products } = props
+    let total = 0
+    for (let index = 0; index < products.data.length; index += 1) {
+      total += products.data[index].quantity * products.data[index].price
+    }
+    this.setState({ total })
+  }
 
   renderListItem = ({ item }, handleNextPage) => (
     <CartItem item={item} handleNextPage={handleNextPage} />
@@ -31,77 +59,53 @@ class Cart extends Component {
 
   handleNextPage = (item) => {
     const { navigation } = this.props
-    navigation.navigate('ProductDetails', { item })
+    navigation.navigate('Cart', { item })
   }
 
   render() {
-    const products = [
-      {
-        id: 1,
-        name: 'Camiseta Hyperas Preta',
-        brand: 'Quiksilver',
-        image:
-          'https://t-static.dafiti.com.br/czCvp3wBNPfehf7omYZfJacnxPY=/fit-in/427x620/dafitistatic-a.akamaihd.net%2fp%2fquiksilver-camiseta-quiksilver-hyperas-preta-8710-7136243-1-product.jpg',
-        price: 49.99,
-      },
-      {
-        id: 2,
-        name: 'Camiseta Double Tap Preta',
-        brand: 'Quiksilver',
-        image:
-          'https://t-static.dafiti.com.br/EpEXepU-tSbgo6ZMl4Y5BOdjelw=/fit-in/427x620/dafitistatic-a.akamaihd.net%2fp%2fquiksilver-camiseta-quiksilver-double-tap-preta-7115-8165043-1-product.jpg',
-        price: 59.99,
-      },
-      {
-        id: 3,
-        name: 'Camiseta Logo Azul',
-        brand: 'Red Bull',
-        image:
-          'https://t-static.dafiti.com.br/aC9871vKWfL3bDgbhLx5sFLa7xs=/fit-in/427x620/dafitistatic-a.akamaihd.net%2fp%2fred-bull-camiseta-red-bull-logo-azul-0272-7714033-1-product.jpg',
-        price: 54.99,
-      },
-      {
-        id: 4,
-        name: 'Camiseta Primo Tipper',
-        brand: 'Rip Curl',
-        image:
-          'https://t-static.dafiti.com.br/weG0u9eKZ4KBV-G0XFOQ5hoY4eI=/fit-in/427x620/dafitistatic-a.akamaihd.net%2fp%2frip-curl-camiseta-rip-curl-primo-tipper-preto-8138-3441052-1-product.jpg',
-        price: 39.99,
-      },
-    ]
-
+    const { products } = this.props
+    const { total } = this.state
     return (
       <Container>
         <StatusBar barStyle="dark-content" />
         <Header title="Carrinho" />
-
-        <FlatCartList
-          data={products}
-          keyExtractor={item => String(item.id)}
-          renderItem={item => this.renderListItem(item, this.handleNextPage)}
-          onRefresh={() => {}}
-          refreshing={false}
-        />
-
+        {!products.data.length
+          ? <Empty />
+          : (
+            <FlatCartList
+              data={products.data}
+              keyExtractor={item => String(item.id)}
+              renderItem={item => this.renderListItem(item, this.handleNextPage)}
+              onRefresh={() => {}}
+              refreshing={false}
+            />
+          )}
         <TotalContainer>
           <SubTotal>Subtotal</SubTotal>
-          <Price>R$ 200,00</Price>
+          <Price>R$ {total}</Price>
         </TotalContainer>
       </Container>
     )
   }
 }
 
-Cart.navigationOptions = {
-  tabBarIcon: ({ tintColor }) => <Icon name="shopping-cart" size={20} color={tintColor} />,
+const tabIcon = ({ tintColor }) => <Icon name="shopping-cart" size={20} color={tintColor} />
+
+tabIcon.propTypes = {
+  tintColor: PropTypes.string.isRequired,
 }
 
-const mapStateToProps = state => ({})
+Cart.navigationOptions = {
+  tabBarIcon: tabIcon,
+}
 
-// const mapDispatchToProps = dispatch =>
-//   bindActionCreators(Actions, dispatch);
+const mapStateToProps = state => ({
+  products: state.cart,
+})
+
+const mapDispatchToProps = dispatch => bindActionCreators(CartActions, dispatch)
 
 export default connect(
-  mapStateToProps
-  // mapDispatchToProps
+  mapStateToProps,
+  mapDispatchToProps
 )(Cart)

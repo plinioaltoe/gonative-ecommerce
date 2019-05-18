@@ -17,7 +17,7 @@ const ProductListItem = ({ item, handleNextPage }) => (
       <Content>
         <Name>{item.name}</Name>
         <Brand>{item.brand}</Brand>
-        <Price>{item.price}</Price>
+        <Price>R$ {item.price}</Price>
       </Content>
     </Container>
   </TouchableOpacity>
