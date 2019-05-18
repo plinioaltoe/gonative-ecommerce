@@ -1,18 +1,19 @@
 import React, { Component } from 'react'
 
-import { View, StatusBar, FlatList } from 'react-native'
-import Icon from 'react-native-vector-icons/FontAwesome'
-import styles from './styles'
+import { StatusBar } from 'react-native'
+import PropTypes from 'prop-types'
+import { Container, FlatProductList } from './styles'
 
-import ListaItem from '~/components/Lista/ListaItem'
+import ProductListItem from './ProductListItem'
 import Header from '~/components/Header'
-// import api from '~/services/api'
 
 import Tabs from '~/components/Tabs'
 
-export default class Products extends Component {
-  static navigationOptions = {
-    tabBarIcon: ({ tintColor }) => <Icon name="home" size={20} color={tintColor} />,
+export default class ProductList extends Component {
+  static propTypes = {
+    navigation: PropTypes.shape({
+      navigate: PropTypes.func,
+    }).isRequired,
   }
 
   state = {}
@@ -20,8 +21,13 @@ export default class Products extends Component {
   componentDidMount = async () => {}
 
   renderListItem = ({ item }, handleNextPage) => (
-    <ListaItem item={item} handleNextPage={handleNextPage} />
+    <ProductListItem item={item} handleNextPage={handleNextPage} />
   )
+
+  handleNextPage = (item) => {
+    const { navigation } = this.props
+    navigation.navigate('ProductDetails', { item })
+  }
 
   render() {
     const products = [
@@ -60,16 +66,19 @@ export default class Products extends Component {
     ]
 
     return (
-      <View style={styles.container}>
+      <Container>
         <StatusBar barStyle="dark-content" />
         <Header title="GoCommerce" />
         <Tabs />
-        <FlatList
+        <FlatProductList
           data={products}
-          keyExtractor={item => String(item.id + Math.random())}
-          renderItem={item => this.renderListItem(item, () => {})}
+          keyExtractor={item => String(item.id)}
+          renderItem={item => this.renderListItem(item, this.handleNextPage)}
+          onRefresh={() => {}}
+          refreshing={false}
+          numColumns={2}
         />
-      </View>
+      </Container>
     )
   }
 }

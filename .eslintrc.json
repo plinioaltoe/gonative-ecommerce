@@ -19,6 +19,8 @@
         "extensions": [".js", ".jsx"]
       }
     ],
+
+    "react-native/no-raw-text": "skip",
     "global-require": "off",
     "import/prefer-default-export": "off",
     "indent": [
@@ -26,6 +28,12 @@
       2,
       {
         "SwitchCase": 1
+      }
+    ],
+    "import/no-extraneous-dependencies": [
+      "error",
+      {
+        "devDependencies": true
       }
     ],
     "react/jsx-one-expression-per-line": 0,
